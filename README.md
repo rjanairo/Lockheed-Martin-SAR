@@ -3,3 +3,10 @@
 LHM Coordination Between Multiple UAVs for Search and Rescue Missions
 California State Polytechnic University, Pomona
 
+## Members
+* Russel Janairo
+* Seth 
+* Kevin
+*
+*
+*
