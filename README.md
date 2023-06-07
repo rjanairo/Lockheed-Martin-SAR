@@ -1,12 +1,26 @@
 # SAR22-23
 
-LHM Coordination Between Multiple UAVs for Search and Rescue Missions
+Lockheed Martin Coordination Between Multiple UAVs for Search and Rescue Missions
 California State Polytechnic University, Pomona
 
-## Spring-Fall semester Plan
+## Summer 2023 semester Plan
 * insert photo
 
-## Members
+## Summer Team Members 2023
+* Russel Janairo
+* Jason Pham
+* Joshua Bicera
+* Daniel Plascencia
+* Truc Nguyen
+* Richard Urbano
+
+
+
+
+## Spring 2022 semester Plan
+* insert photo
+
+## Spring Team Members 2022
 * Russel Janairo
 * Simon Nguyen
 * Seth Laske
