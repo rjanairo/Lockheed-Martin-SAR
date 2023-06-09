@@ -12,7 +12,7 @@ California State Polytechnic University, Pomona
 * Joshua Bicera
 * Daniel Plascencia
 * Truc Nguyen
-* Richard Urbano
+* Richard Reyes Urbano
 
 
 
