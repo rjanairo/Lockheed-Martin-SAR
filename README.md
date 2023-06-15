@@ -1,4 +1,4 @@
-# SAR22-23
+# Repository for Cal Poly Pomona Search and Rescue Drone 22-23
 
 Lockheed Martin Coordination Between Multiple UAVs for Search and Rescue Missions
 California State Polytechnic University, Pomona
