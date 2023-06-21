@@ -1,8 +1,0 @@
-{
-	"name": "icm 20602",
-	"scan": [{
-		"device": "icm20602_ext",
-		"query": "0x75",
-		"responce": ["0x12"]
-	}]
-}
