@@ -11,7 +11,7 @@ California State Polytechnic University, Pomona
 
 ## Summer Team Members 2023
 * Russel Janairo
-* Jason Yam
+* Jason Yam (hi)
 * Joshua Bicera
 * Daniel Plascencia
 * Truc Nguyen
