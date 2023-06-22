@@ -2,7 +2,7 @@
 
 Lockheed Martin Coordination Between Multiple UAVs for Search and Rescue Missions
 California State Polytechnic University, Pomona
-OneDrive link: https://livecsupomona-my.sharepoint.com/:f:/g/personal/nurieva_cpp_edu/EnETrrzB_6pPhO22BfIuog8B9ay9SjD1VGuSQGLWD2Wbcw?e=OsX7tr
+[OneDrive Documentations](https://livecsupomona-my.sharepoint.com/:f:/g/personal/nurieva_cpp_edu/EnETrrzB_6pPhO22BfIuog8B9ay9SjD1VGuSQGLWD2Wbcw?e=OsX7tr)
 ## Concept of Operation
 ![alt text](https://github.com/rjanairo/Lockheed-Martin-SAR/blob/main/Images/conceptOperation.png?raw=true)
 ## Summer 2023 semester Plan
