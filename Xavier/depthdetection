@@ -1,0 +1,6 @@
+import jetson.inference
+import jetson.utils
+
+import numpy as np
+
+net = jetson.inference.depthNet(network = "fcn-mobilenet")
