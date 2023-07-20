@@ -61,7 +61,9 @@ while True:
     for i in range(len(contours)):
         area = cv.contourArea(contours[i])
         if area > 5000 and area < 13000:
-            contours[0] = contours[i]
+            tuple_list = list(contours)
+            tuple_list[0] = tuple_list[i]
+            contours = tuple(tuple_list)
             x, y, w, h = cv.boundingRect(contours[i])
             cv.rectangle(new_frame, (x, y), (x + w, y + h), (255, 0, 0), 2)#Drawing Rectangles
             center_x = x + w / 2

@@ -8,7 +8,7 @@ from time import gmtime, strftime
 import os
 
 
-def arm_and_takeoff(aTargetAltitude):
+"""def arm_and_takeoff(aTargetAltitude):
     print("Basic pre-arm checks")
     while not vehicle.is_armable:
         print(" Waiting for vehicle to initialise...")
@@ -59,11 +59,10 @@ def goto_position_target_local_ned(north, east, down):
     vehicle.send_mavlink(msg)
     vehicle.flush()
 
-
+"""
 def draw_flow(img, flow, step=8):
     h, w = img.shape[:2]
     y, x = np.mgrid[step / 2:h:step, step / 2:w:step].reshape(2, -1).astype(int)
-
     fx, fy = flow[y, x].T
 
     lines = np.vstack([x, y, x + fx, y + fy]).T.reshape(-1, 2, 2)
@@ -110,6 +109,7 @@ def recording_setup_Windows(dir_original, dir_opt_flow):
     # changed FPS from 20 to 8
     return out_original, out_opt_flow
 
+
 def make_decision_Areas_method(new_frame):
     frame_HSV = cv.cvtColor(new_frame, cv.COLOR_BGR2HSV)  # convert to HSV
     frame_threshold = cv.inRange(frame_HSV, (0, 58, 140), (57, 255, 255))
@@ -118,24 +118,43 @@ def make_decision_Areas_method(new_frame):
     #print ( len(contours) )
     areas = []
     centers = []
+    heights = []
     for contour in contours:
         areas.append( cv.contourArea(contour) )
-
         x, y, w, h = cv.boundingRect(contour)  # then coordinate and height and width of the bounding box
         centers.append( x + (w/2))
+        heights.append(y + (h/2))
         cv.rectangle(new_frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-
+    print("Width:" , np.median(centers))
+    print("Height:" , np.median(heights))
     if ( len(contours) ) >= 5 and max(areas) > 5000:
-        if np.median(centers) <= 320:
-            decision = "left"
-            print("turn left")
-        if np.median(centers) > 320:
-            decision = "right"
+       #Left and Right check (3 seperated sections)
+        if np.median(centers) <= 245: #leftmost section
+            decision_lr = "right"
             print("turn right")
-    else:
-        decision = "0"
+        elif np.median(centers) > 395: #rightmost section
+            decision_lr = "left"
+            print("turn left")
+        elif np.median(centers) > 245 and np.median(centers) <= 395: #midsection
+            decision_lr = "striaght"
+            print("go straight (lr)")
 
-    return decision
+        #Up and Down check (3 seperated sections)
+        if np.median(heights) <= 190: #bottommost section
+            decision_ud = "up" 
+            print("Go up")
+        elif np.median(centers) > 290: #upmost section
+            decision_ud = "down"
+            print("Go down")
+        elif np.median(heights) > 190 and np.median(centers) <= 290: #midsection
+            decision_ud = "straight"
+            print("Go straight (ud)")
+    else: #no objects being measured close enough to be be a threat to maneuver around
+        decision_lr = "0"
+        decision_ud = "0"
+
+    return decision_lr, decision_ud
+
 
 # END of definitions
 
@@ -151,7 +170,8 @@ cam = cv.VideoCapture(0)
 ret, prev = cam.read() #Reads a frame from camera
 h, w = prev.shape[:2]  # gets height and width of the image (in pixels)
 prevgray = cv.cvtColor(prev, cv.COLOR_BGR2GRAY) # converts image to grayscale (needed for processing)
-
+print(h)
+print(w)
 fr_count = 0
 while True:
     fr_count += 1
