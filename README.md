@@ -8,7 +8,7 @@ California State Polytechnic University, Pomona
 ## Objective of this Project
 ![alt text](https://github.com/rjanairo/Lockheed-Martin-SAR/blob/main/Images/conceptOperation.png?raw=true)
 ## Summer 2023 semester Plan
-* insert photo
+![alt text](https://github.com/rjanairo/Lockheed-Martin-SAR/blob/main/Images/Agenda.png?raw=true)
 
 ## Summer Team Members 2023
 * Russel Janairo
