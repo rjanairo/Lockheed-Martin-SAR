@@ -11,6 +11,7 @@ California State Polytechnic University, Pomona
 ![alt text](https://github.com/rjanairo/Lockheed-Martin-SAR/blob/main/Images/Agenda.png?raw=true)
 
 ## Summer Team Members 2023
+* Russel Janairo
 * Jason Yam
 * Joshua Bicera
 * Daniel Plascencia
