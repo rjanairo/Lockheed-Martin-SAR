@@ -6,8 +6,10 @@ import matplotlib.pyplot as plt
 # Create video capture object for webcam
 cap = cv2.VideoCapture(0)  # 0 is default camera
 
+if not cap.isOpened():
+        raise Exception("Could not open video capture device (camera).")
 frameCount = 0
-redetectInterval = 20
+redetectInterval = 10
 
 # Shi-Tomasi Parameters
 # Max corners = negative number if you don't want a max
@@ -32,7 +34,7 @@ roi_width = 400
 roi_x1 = (frame_width - roi_width) // 2  # Center the ROI horizontally
 roi_x2 = roi_x1 + roi_width
 
-# Define the Lucas-Kanade window size based on the ROI dimensions
+# Define the Lucas-Kanade window size 
 lk_params = dict(winSize=(200, 200), maxLevel=2, criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
 # Adjust the first frame
@@ -72,9 +74,9 @@ while True:
 
     # Grayscale image before edge detection
     gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
-
+    roi = gray[0:roi_height, roi_x1:roi_x2]
     # Calculate Lucas-Kanade optical flow
-    new_edges, status, _ = cv2.calcOpticalFlowPyrLK(initGray, gray, edges, None, **lk_params)
+    new_edges, status, _ = cv2.calcOpticalFlowPyrLK(initROI, roi, edges, None, **lk_params)
 
     # Select good points
     good_new = new_edges[status == 1]
