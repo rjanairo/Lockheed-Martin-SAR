@@ -9,11 +9,11 @@ cap = cv2.VideoCapture(0)  # 0 is default camera
 if not cap.isOpened():
         raise Exception("Could not open video capture device (camera).")
 frameCount = 0
-redetectInterval = 10
-
+redetectInterval = 5
+displacement_threshold = 0.75
 # Shi-Tomasi Parameters
 # Max corners = negative number if you don't want a max
-shitomasi_params = dict(maxCorners=100, qualityLevel=0.5, minDistance=7, blockSize=7)
+shitomasi_params = dict(maxCorners= 150, qualityLevel=0.5, minDistance=7, blockSize=7)
 
 # Read the first frame
 ret, frame = cap.read()
@@ -28,7 +28,7 @@ frame_height, frame_width = frame.shape[:2]
 roi_height = frame_height
 
 # Define the width of the rectangular ROI (you can adjust this value)
-roi_width = 400
+roi_width = 600
 
 # Calculate the x-coordinates to define the rectangular ROI
 roi_x1 = (frame_width - roi_width) // 2  # Center the ROI horizontally
@@ -82,12 +82,31 @@ while True:
     good_new = new_edges[status == 1]
     good_old = edges[status == 1]
 
+    # Obstacle detection
+    obstacle_detected = False
+
     # Draw optical flow lines on the frame
     for i, (new, old) in enumerate(zip(good_new, good_old)):
-        a, b = new.ravel()
-        c, d = old.ravel()
-        mask = cv2.line(mask, (int(a), int(b)), (int(c), int(d)), (0, 0, 255), 2)
-        frame = cv2.circle(frame, (int(a), int(b)), 9, (0, 0, 255), -1)
+        x1, y1 = new.ravel()
+        x2, y2 = old.ravel()
+
+        displacement_x = x1 - x2
+        displacement_y = y1 - y2
+
+        # Check if displacement exceeds threshold
+        if abs(displacement_x) > displacement_threshold or abs(displacement_y) > displacement_threshold:
+            # Potential obstacle detected
+            obstacle_detected = True
+            
+            # Determine the direction of the obstacle
+            if x1 + roi_x1 < roi_x1 + roi_width // 2:
+                obstacle_direction = "Left"
+            else:
+                obstacle_direction = "Right"
+            mask = cv2.arrowedLine(mask, (int(x1 +roi_x1), int(y1)), (int(x2 +roi_x1), int(y2)), (0, 255, 0), 2)
+            frame = cv2.circle(frame, (int(x1 +roi_x1), int(y1)), 3, (0, 255, 0), thickness=-1)
+
+
 
     # Overlay the optical flow lines on the frame
     output = cv2.add(frame, mask)
