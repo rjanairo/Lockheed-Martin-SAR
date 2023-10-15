@@ -11,12 +11,17 @@ if not cap.isOpened():
 frameCount = 0
 redetectInterval = 5
 displacement_threshold = 0.75
+obstacle_detected = False  # Flag to track obstacle detection
+obstacle_direction = "No Obstacle"  # Initialize with no obstacle
 # Shi-Tomasi Parameters
 # Max corners = negative number if you don't want a max
-shitomasi_params = dict(maxCorners= 150, qualityLevel=0.5, minDistance=7, blockSize=7)
+shitomasi_params = dict(maxCorners= 200, qualityLevel=0.7, minDistance=7, blockSize=7)
 
 # Read the first frame
 ret, frame = cap.read()
+
+# Rate at which arrowed line decays
+line_decay = 0.1
 
 # Create an empty mask to draw on later
 mask = np.zeros_like(frame)
@@ -28,7 +33,7 @@ frame_height, frame_width = frame.shape[:2]
 roi_height = frame_height
 
 # Define the width of the rectangular ROI (you can adjust this value)
-roi_width = 600
+roi_width = 450
 
 # Calculate the x-coordinates to define the rectangular ROI
 roi_x1 = (frame_width - roi_width) // 2  # Center the ROI horizontally
@@ -85,6 +90,9 @@ while True:
     # Obstacle detection
     obstacle_detected = False
 
+    # Decay the existing lines
+    mask = mask * (1 - line_decay)
+
     # Draw optical flow lines on the frame
     for i, (new, old) in enumerate(zip(good_new, good_old)):
         x1, y1 = new.ravel()
@@ -103,13 +111,15 @@ while True:
                 obstacle_direction = "Left"
             else:
                 obstacle_direction = "Right"
+            # Draw text indicating the obstacle direction
+            cv2.putText(frame, f"Obstacle: {obstacle_direction}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             mask = cv2.arrowedLine(mask, (int(x1 +roi_x1), int(y1)), (int(x2 +roi_x1), int(y2)), (0, 255, 0), 2)
             frame = cv2.circle(frame, (int(x1 +roi_x1), int(y1)), 3, (0, 255, 0), thickness=-1)
 
 
 
     # Overlay the optical flow lines on the frame
-    output = cv2.add(frame, mask)
+    output = cv2.add(frame, mask, dtype=cv2.CV_8U)
 
     # Show the frame with optical flow visualization
     cv2.imshow('Optical Flow', output)
