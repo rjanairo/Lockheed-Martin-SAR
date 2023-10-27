@@ -46,15 +46,7 @@ def main():
 
     res = sl.Resolution()
     res.width = 720
-    res.height = 404
-
-    #Declare ROI Specs
-    roi_height = res.height
-    roi_width = 450
-
-    # Calculate the x-coordinates to define the rectangular ROI
-    roi_x1 = (frame_width - roi_width) // 2  # Center the ROI horizontally
-    roi_x2 = roi_x1 + roi_width
+    res.height = 500
 
     #Declare your sl.Mat matrices for OpenCV
     image_zed = sl.Mat(res.width / 2, res.height / 2, sl.MAT_TYPE.U8_C4)
@@ -82,14 +74,11 @@ def main():
             zed.retrieve_image(depth_image_zed, sl.VIEW.DEPTH, sl.MEM.CPU, res)
             # Retrieve the RGBA point cloud in half resolution (OPENCV)
             zed.retrieve_measure(point_cloud, sl.MEASURE.XYZRGBA, sl.MEM.CPU, res)
-            
-            depth_roi = depth_image_zed[0:roi_height,roi_width]
 
             # To recover data from sl.Mat to use it with opencv, use the get_data() method
             # It returns a numpy array that can be used as a matrix with opencv
             image_ocv = image_zed.get_data()
-            depth_image_ocv = depth_roi.get_data()
-            print(image_ocv)
+            depth_image_ocv = depth_image_zed.get_data()
 
             #these should draw a green circle on area that is being measured for distance
             #this one is for the regular camera image
@@ -102,7 +91,7 @@ def main():
 
             
             # Split camera in two
-            cv2.line(mask, (frame_width // 2, 0), (frame_width // 2, frame_height), (255, 0, 0), 2)
+            cv2.line(depth_image_ocv, (res.width // 2, 0), (res.width // 2, res.height), (255, 0, 0), 2)
             cv2.imshow("Depth", depth_image_ocv)
 
             #calculating distance using euclidean distance formula: sqrt(x^2 + y^2 + z^2)
