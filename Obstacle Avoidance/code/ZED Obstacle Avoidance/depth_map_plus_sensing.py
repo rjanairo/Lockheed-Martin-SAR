@@ -133,7 +133,7 @@ def main():
                 distance = math.sqrt(point_cloud_value[0] * point_cloud_value[0] +
                                     point_cloud_value[1] * point_cloud_value[1] +
                                     point_cloud_value[2] * point_cloud_value[2])
-                print(f"Distance to Camera at {{{x};{y}}}: {distance/348.8}ft")
+                print(f"Distance to Camera at {{{x};{y}}}: {distance}")
             else : 
                 print(f"The distance can not be computed at {{{x};{y}}}")
     viewer.exit()
