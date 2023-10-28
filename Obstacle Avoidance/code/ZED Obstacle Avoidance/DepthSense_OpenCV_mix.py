@@ -5,11 +5,9 @@ import math
 import sys 
 
 """
-future function: Modularizing the depth_measuring to allow multiple points to run at the same
-time without killing resource usage/long code
-needed parameters:
-    - zed :variable sl.Camera()
-    - 
+Possible Ideas:
+using depth map get highest contrast pixel and create a contour around that pixel
+if possible use depth mapping calculating to calculate the center of that contour?
 
 
 """
