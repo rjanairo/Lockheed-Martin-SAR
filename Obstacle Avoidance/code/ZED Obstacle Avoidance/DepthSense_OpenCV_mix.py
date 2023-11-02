@@ -49,8 +49,16 @@ def main():
     res.width = 1280
     res.height = 720
 
+    #New adjusted size for ROI
     new_width = 700
     new_height = 404
+
+    #Text stuff
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale = 1
+    font_color = (255, 255, 255)  # Color in BGR format
+    thickness = 2
+    text_coord = (30, 30)
 
     #Declare your sl.Mat matrices for OpenCV
     image_zed = sl.Mat(res.width / 2, res.height / 2, sl.MAT_TYPE.U8_C4)
@@ -106,6 +114,13 @@ def main():
                     if not np.isnan(distance) and not np.isinf(distance):
                         # distance * 3.28084 is used for conversion of m to ft
                         print("Distance to center of contour at ({}, {}) (image center): {:1.3} ft".format(center_x, center_y, distance*3.28084), end="\r")
+
+                    if center_x < 360 and center_y > 100:
+                        cv2.putText(image_ocv, "Left", org, font, font_scale, font_color, thickness)
+                    elif center_x >=360 and center_y > 100:
+                        cv2.putText(image_ocv, "Right", org, font, font_scale, font_color, thickness)
+                    elif center_y <= 100:
+                        cv2.putText(image_ocv, "Up", org, font, font_scale, font_color, thickness)
                 
 
             # Get and print distance value in m at the center of the image
