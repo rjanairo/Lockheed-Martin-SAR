@@ -56,7 +56,7 @@ def main():
     #Text stuff
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = 1
-    font_color = (255, 255, 255)  # Color in BGR format
+    font_color = (0, 0, 0)  # Color in BGR format
     thickness = 2
     text_coord = (30, 30)
 
@@ -115,12 +115,12 @@ def main():
                         # distance * 3.28084 is used for conversion of m to ft
                         print("Distance to center of contour at ({}, {}) (image center): {:1.3} ft".format(center_x, center_y, distance*3.28084), end="\r")
 
-                    if center_x < 360 and center_y > 100:
-                        cv2.putText(image_ocv, "Left", org, font, font_scale, font_color, thickness)
-                    elif center_x >=360 and center_y > 100:
-                        cv2.putText(image_ocv, "Right", org, font, font_scale, font_color, thickness)
-                    elif center_y <= 100:
-                        cv2.putText(image_ocv, "Up", org, font, font_scale, font_color, thickness)
+                    if center_x < 360 and center_y < new_height - 100:
+                        cv2.putText(image_ocv, "Left", text_coord, font, font_scale, font_color, thickness)
+                    elif center_x >=360 and center_y < new_height - 100:
+                        cv2.putText(image_ocv, "Right", text_coord, font, font_scale, font_color, thickness)
+                    elif center_y >= new_height - 100:
+                        cv2.putText(image_ocv, "Up", text_coord, font, font_scale, font_color, thickness)
                 
 
             # Get and print distance value in m at the center of the image
