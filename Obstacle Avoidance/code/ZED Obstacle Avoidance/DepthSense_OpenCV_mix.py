@@ -52,6 +52,11 @@ def main():
     new_width = 720
     new_height = 404
 
+    start_x = (new_width - res.width) // 2
+    end_x = start_x + res.width
+    start_y = (new_height - res.height) // 2
+    end_y = start_y + res.height
+
     #Declare your sl.Mat matrices for OpenCV
     image_zed = sl.Mat(res.width / 2, res.height / 2, sl.MAT_TYPE.U8_C4)
     depth_image_zed = sl.Mat(res.width/ 2, res.height / 2, sl.MAT_TYPE.U8_C4)
@@ -75,10 +80,8 @@ def main():
 
             # To recover data from sl.Mat to use it with opencv, use the get_data() method
             # It returns a numpy array that can be used as a matrix with opencv
-            image_ocv = image_zed.get_data()
-            image_ocv = cv2.resize(image_ocv,(new_width,new_height))
-            depth_image_ocv = depth_image_zed.get_data()
-            depth_image_ocv = cv2.resize(depth_image_ocv,(new_width,new_height))
+            image_ocv = image_zed.get_data()[start_y:end_y, start_x:end_x]
+            depth_image_ocv = depth_image_zed.get_data()[start_y:end_y, start_x:end_x]
 
             #Contour Area
             threshold_min = 230 #min pixel intensity for depth
