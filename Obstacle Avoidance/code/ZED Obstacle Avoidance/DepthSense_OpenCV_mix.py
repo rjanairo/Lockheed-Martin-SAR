@@ -123,9 +123,9 @@ def main():
             #display normal image and depth image
             cv2.imshow("Image", image_ocv)
 
-            cv2.line(depth_image_ocv, (0, res.height - 100), (res.width, res.height - 100), (0, 0, 255), 2)
+            cv2.line(depth_image_ocv, (0, new_height - 100), (new_width, new_height - 100), (0, 0, 255), 2)
             # Split camera in two
-            cv2.line(depth_image_ocv, (res.width // 2, 0), (res.width // 2, res.height-100), (255, 0, 0), 2)
+            cv2.line(depth_image_ocv, (new_width // 2, 0), (new_width // 2, new_height-100), (255, 0, 0), 2)
             cv2.imshow("Depth", depth_image_ocv)
 
             #calculating distance using euclidean distance formula: sqrt(x^2 + y^2 + z^2) at center of camera
