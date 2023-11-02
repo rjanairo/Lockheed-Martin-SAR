@@ -49,13 +49,8 @@ def main():
     res.width = 1280
     res.height = 720
 
-    new_width = 720
+    new_width = 700
     new_height = 404
-
-    start_x = (new_width - res.width) // 2
-    end_x = start_x + res.width
-    start_y = (new_height - res.height) // 2
-    end_y = start_y + res.height
 
     #Declare your sl.Mat matrices for OpenCV
     image_zed = sl.Mat(res.width / 2, res.height / 2, sl.MAT_TYPE.U8_C4)
@@ -80,17 +75,20 @@ def main():
 
             # To recover data from sl.Mat to use it with opencv, use the get_data() method
             # It returns a numpy array that can be used as a matrix with opencv
-            image_ocv = image_zed.get_data()[start_y:end_y, start_x:end_x]
-            depth_image_ocv = depth_image_zed.get_data()[start_y:end_y, start_x:end_x]
+            image_ocv = image_zed.get_data()
+            image_ocv = cv2.resize(image_ocv,(new_width,new_height))
+            depth_image_ocv = depth_image_zed.get_data()
+            depth_image_ocv = cv2.resize(depth_image_ocv,(new_width,new_height))
 
             #Contour Area
             threshold_min = 230 #min pixel intensity for depth
             threshold_max = 255 #max pixel intensity for depth
+            contour_area_threshold = 1500 #threshold value for contour area size
 
             gray_frame = cv2.cvtColor(depth_image_ocv, cv2.COLOR_BGR2GRAY)
             ret, thresh = cv2.threshold(gray_frame, threshold_min, threshold_max, cv2.THRESH_BINARY)
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            valid_contours = [contour for contour in contours if cv2.contourArea(contour) > 1500]
+            valid_contours = [contour for contour in contours if cv2.contourArea(contour) > contour_area_threshold]
             largest_contour = max(valid_contours, key=cv2.contourArea, default=None)
             centers = []
             if largest_contour is not None:
