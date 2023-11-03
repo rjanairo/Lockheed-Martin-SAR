@@ -110,11 +110,11 @@ def main():
                         cv2.circle(depth_image_ocv, (center_x, center_y), 10, (0, 0, 255), -1)
                         
                         #printing distance measured at largest contour center at top right of frame
-                        cv2.putText(depth_image_ocv, "{distance}", (500,0), font, font_scale, font_color, thickness)
+                        cv2.putText(depth_image_ocv, str(round(distance*3.28084,2)) + " ft", (550,30), font, font_scale, font_color, thickness)
                         
-                        if 50 < center_x < 360 and 50 < center_y < new_height - 100: #just testing values to prevent corner of screen distance issues
+                        if 25 < center_x < 360 and 25 < center_y < new_height - 100: #just testing values to prevent corner of screen distance issues
                             cv2.putText(depth_image_ocv, "Go Right", text_coord, font, font_scale, font_color, thickness)
-                        elif 600 > center_x >= 360 and 50 < center_y < new_height - 100: #just testing values too prevent corner of screen distance issues
+                        elif 675 > center_x >= 360 and 50 < center_y < new_height - 100: #just testing values too prevent corner of screen distance issues
                             cv2.putText(depth_image_ocv, "Go Left", text_coord, font, font_scale, font_color, thickness)
                         elif center_y >= new_height - 100:
                             cv2.putText(depth_image_ocv, "Go Up ", text_coord, font, font_scale, font_color, thickness)
