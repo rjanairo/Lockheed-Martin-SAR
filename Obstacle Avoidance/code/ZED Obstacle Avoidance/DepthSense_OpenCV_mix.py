@@ -4,13 +4,6 @@ import cv2
 import math
 import sys 
 
-"""
-Possible Ideas:
-using depth map get highest contrast pixel and create a contour around that pixel
-if possible use depth mapping calculating to calculate the center of that contour?
-
-
-"""
 def Ecludian_Distance(point_cloud_value):
     #calculating distance using euclidean distance formula: sqrt(x^2 + y^2 + z^2) at center of camera
     return math.sqrt(point_cloud_value[0] * point_cloud_value[0] +
@@ -56,7 +49,7 @@ def main():
     #Text stuff
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = 1
-    font_color = (0, 0, 0)  # Color in BGR format
+    font_color = (0, 255, 0)  # Color in BGR format
     thickness = 2
     text_coord = (30, 30)
 
@@ -105,8 +98,6 @@ def main():
                     center_x = int(M["m10"] / M["m00"]) # sum of x coordinates / total pixels in image
                     center_y = int(M["m01"] / M["m00"]) # sum of y coordinates / total pixels in image
                     centers.append((center_x, center_y))
-                    #create circle at center of the largest contour for visual purposes
-                    cv2.circle(depth_image_ocv, (center_x, center_y), 10, (0, 0, 255), -1)
                     #create point cloud value for measuring distance at the center point
                     err, point_cloud_value = point_cloud.get_value(center_x, center_y)
                     #calculate the distance to that center point
@@ -114,14 +105,18 @@ def main():
                     if not np.isnan(distance) and not np.isinf(distance):
                         # distance * 3.28084 is used for conversion of m to ft
                         print("Distance to center of contour at ({}, {}) (image center): {:1.3} ft".format(center_x, center_y, distance*3.28084), end="\r")
-
-                    if center_x < 360 and center_y < new_height - 100:
-                        cv2.putText(image_ocv, "Left", text_coord, font, font_scale, font_color, thickness)
-                    elif center_x >=360 and center_y < new_height - 100:
-                        cv2.putText(image_ocv, "Right", text_coord, font, font_scale, font_color, thickness)
-                    elif center_y >= new_height - 100:
-                        cv2.putText(image_ocv, "Up", text_coord, font, font_scale, font_color, thickness)
-                
+                        if (distance*3.28084) > 7: #just testing for now a value of 7ft away from camera before it'll display the contour center and the text
+                            #create circle at center of the largest contour for visual purposes
+                            cv2.circle(depth_image_ocv, (center_x, center_y), 10, (0, 0, 255), -1)
+                            #printing distance measured at largest contour center at top right of frame
+                            cv2.putText(depth_image_ocv, "{distance}", (500,0), font, font_scale, font_color, thickness)
+                            if 100< center_x < 360 and 100 < center_y < new_height - 100: #just testing values to prevent corner of screen distance issues
+                                cv2.putText(depth_image_ocv, "Go Right", text_coord, font, font_scale, font_color, thickness)
+                            elif 600 > center_x >=360 and 100< center_y < new_height - 100: #just testing values too prevent corner of screen distance issues
+                                cv2.putText(depth_image_ocv, "Go Left", text_coord, font, font_scale, font_color, thickness)
+                            elif center_y >= new_height - 100:
+                                cv2.putText(depth_image_ocv, "Go Up ", text_coord, font, font_scale, font_color, thickness)
+                        
 
             # Get and print distance value in m at the center of the image
             # We measure the distance camera - object using Euclidean distance
