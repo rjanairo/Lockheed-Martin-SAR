@@ -104,30 +104,30 @@ def main():
                     if distance_from_center < max_distance_from_center:
                         filtered_contours.append(contour)
 
-            # Find the largest contour among the filtered ones
-            largest_contour = max(filtered_contours, key=cv2.contourArea, default=None)
+                    # Find the largest contour among the filtered ones
+                    largest_contour = max(filtered_contours, key=cv2.contourArea, default=None)
 
-            #create point cloud value for measuring distance at the center point
-            err, point_cloud_value = point_cloud.get_value(center_x, center_y)
-            #calculate the distance to that center point
-            distance = Ecludian_Distance(point_cloud_value)
-            if not np.isnan(distance) and not np.isinf(distance) and (distance*3.28084) > 7:  #just testing for now a value of 7ft away from camera before it'll display the contour center and the text
-                # distance * 3.28084 is used for conversion of m to ft
-                print("Distance to center of contour at ({}, {}) (image center): {:1.3} ft".format(center_x, center_y, distance*3.28084), end="\r")
+                    #create point cloud value for measuring distance at the center point
+                    err, point_cloud_value = point_cloud.get_value(center_x, center_y)
+                    #calculate the distance to that center point
+                    distance = Ecludian_Distance(point_cloud_value)
+                    if not np.isnan(distance) and not np.isinf(distance) and (distance*3.28084) > 7:  #just testing for now a value of 7ft away from camera before it'll display the contour center and the text
+                        # distance * 3.28084 is used for conversion of m to ft
+                        print("Distance to center of contour at ({}, {}) (image center): {:1.3} ft".format(center_x, center_y, distance*3.28084), end="\r")
 
-                #create circle at center of the largest contour for visual purposes
-                cv2.circle(depth_image_ocv, (center_x, center_y), 10, (0, 0, 255), -1)
-                
-                #printing distance measured at largest contour center at top right of frame
-                cv2.putText(depth_image_ocv, str(round(distance*3.28084,2)) + " ft", (550,30), font, font_scale, font_color, thickness)
-                
-                if 25 < center_x < 360 and 25 < center_y < new_height - 100: #just testing values to prevent corner of screen distance issues
-                    cv2.putText(depth_image_ocv, "Go Right", text_coord, font, font_scale, font_color, thickness)
-                elif 675 > center_x >= 360 and 50 < center_y < new_height - 100: #just testing values too prevent corner of screen distance issues
-                    cv2.putText(depth_image_ocv, "Go Left", text_coord, font, font_scale, font_color, thickness)
-                elif center_y >= new_height - 100:
-                    cv2.putText(depth_image_ocv, "Go Up ", text_coord, font, font_scale, font_color, thickness)
-                
+                        #create circle at center of the largest contour for visual purposes
+                        cv2.circle(depth_image_ocv, (center_x, center_y), 10, (0, 0, 255), -1)
+                        
+                        #printing distance measured at largest contour center at top right of frame
+                        cv2.putText(depth_image_ocv, str(round(distance*3.28084,2)) + " ft", (550,30), font, font_scale, font_color, thickness)
+                        
+                        if 25 < center_x < 360 and 25 < center_y < new_height - 100: #just testing values to prevent corner of screen distance issues
+                            cv2.putText(depth_image_ocv, "Go Right", text_coord, font, font_scale, font_color, thickness)
+                        elif 675 > center_x >= 360 and 50 < center_y < new_height - 100: #just testing values too prevent corner of screen distance issues
+                            cv2.putText(depth_image_ocv, "Go Left", text_coord, font, font_scale, font_color, thickness)
+                        elif center_y >= new_height - 100:
+                            cv2.putText(depth_image_ocv, "Go Up ", text_coord, font, font_scale, font_color, thickness)
+                        
             cv2.imshow("Image", image_ocv)
 
             cv2.line(depth_image_ocv, (0, new_height - 100), (new_width, new_height - 100), (0, 0, 255), 2)
