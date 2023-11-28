@@ -90,65 +90,50 @@ def main():
             ret, thresh = cv2.threshold(gray_frame, threshold_min, threshold_max, cv2.THRESH_BINARY)
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             valid_contours = [contour for contour in contours if cv2.contourArea(contour) > contour_area_threshold]
-            largest_contour = max(valid_contours, key=cv2.contourArea, default=None)
-            centers = []
-            if largest_contour is not None:
-                M = cv2.moments(largest_contour)
+
+            filtered_contours = []
+            for contour in valid_contours:
+                M = cv2.moments(contour)
                 if M["m00"] != 0: #if total number of pixels on the moment is not 0
                     center_x = int(M["m10"] / M["m00"]) # sum of x coordinates / total pixels in image
                     center_y = int(M["m01"] / M["m00"]) # sum of y coordinates / total pixels in image
-                    centers.append((center_x, center_y))
-                    #create point cloud value for measuring distance at the center point
-                    err, point_cloud_value = point_cloud.get_value(center_x, center_y)
-                    #calculate the distance to that center point
-                    distance = Ecludian_Distance(point_cloud_value)
-                    if not np.isnan(distance) and not np.isinf(distance) and (distance*3.28084) > 7:  #just testing for now a value of 7ft away from camera before it'll display the contour center and the text
-                        # distance * 3.28084 is used for conversion of m to ft
-                        print("Distance to center of contour at ({}, {}) (image center): {:1.3} ft".format(center_x, center_y, distance*3.28084), end="\r")
+                    
+                    # Calculate Euclidean distance from the frame center
+                    distance_from_center = np.sqrt((center_x - (new_width/2)) ** 2 + (center_y - (new_height/2)) ** 2)
+                    max_distance_from_center = min(round(new_width/2), round(new_height/2)) * 0.8
+                    if distance_from_center < max_distance_from_center:
+                        filtered_contours.append(contour)
 
-                        #create circle at center of the largest contour for visual purposes
-                        cv2.circle(depth_image_ocv, (center_x, center_y), 10, (0, 0, 255), -1)
-                        
-                        #printing distance measured at largest contour center at top right of frame
-                        cv2.putText(depth_image_ocv, str(round(distance*3.28084,2)) + " ft", (550,30), font, font_scale, font_color, thickness)
-                        
-                        if 25 < center_x < 360 and 25 < center_y < new_height - 100: #just testing values to prevent corner of screen distance issues
-                            cv2.putText(depth_image_ocv, "Go Right", text_coord, font, font_scale, font_color, thickness)
-                        elif 675 > center_x >= 360 and 50 < center_y < new_height - 100: #just testing values too prevent corner of screen distance issues
-                            cv2.putText(depth_image_ocv, "Go Left", text_coord, font, font_scale, font_color, thickness)
-                        elif center_y >= new_height - 100:
-                            cv2.putText(depth_image_ocv, "Go Up ", text_coord, font, font_scale, font_color, thickness)
-                        
+            # Find the largest contour among the filtered ones
+            largest_contour = max(filtered_contours, key=cv2.contourArea, default=None)
 
-            # Get and print distance value in m at the center of the image
-            # We measure the distance camera - object using Euclidean distance
-            #x = round(image.get_width() / 2)
-            #y = round(image.get_height() / 2)
-            #err, point_cloud_value = point_cloud.get_value(x, y)
+            #create point cloud value for measuring distance at the center point
+            err, point_cloud_value = point_cloud.get_value(center_x, center_y)
+            #calculate the distance to that center point
+            distance = Ecludian_Distance(point_cloud_value)
+            if not np.isnan(distance) and not np.isinf(distance) and (distance*3.28084) > 7:  #just testing for now a value of 7ft away from camera before it'll display the contour center and the text
+                # distance * 3.28084 is used for conversion of m to ft
+                print("Distance to center of contour at ({}, {}) (image center): {:1.3} ft".format(center_x, center_y, distance*3.28084), end="\r")
 
-            #these should draw a green circle on area that is being measured for distance
-            #this one is for the regular camera image
-            #cv2.circle(image_ocv, (round(res.width/2) , round(res.height/2)), 1, (0,255,0), 2) 
-            #this one is for the depth image
-            #cv2.circle(depth_image_ocv, (round(res.width/2) , round(res.height/2)), 1, (0,255,0), 2) 
-            
-            #display normal image and depth image
+                #create circle at center of the largest contour for visual purposes
+                cv2.circle(depth_image_ocv, (center_x, center_y), 10, (0, 0, 255), -1)
+                
+                #printing distance measured at largest contour center at top right of frame
+                cv2.putText(depth_image_ocv, str(round(distance*3.28084,2)) + " ft", (550,30), font, font_scale, font_color, thickness)
+                
+                if 25 < center_x < 360 and 25 < center_y < new_height - 100: #just testing values to prevent corner of screen distance issues
+                    cv2.putText(depth_image_ocv, "Go Right", text_coord, font, font_scale, font_color, thickness)
+                elif 675 > center_x >= 360 and 50 < center_y < new_height - 100: #just testing values too prevent corner of screen distance issues
+                    cv2.putText(depth_image_ocv, "Go Left", text_coord, font, font_scale, font_color, thickness)
+                elif center_y >= new_height - 100:
+                    cv2.putText(depth_image_ocv, "Go Up ", text_coord, font, font_scale, font_color, thickness)
+                
             cv2.imshow("Image", image_ocv)
 
             cv2.line(depth_image_ocv, (0, new_height - 100), (new_width, new_height - 100), (0, 0, 255), 2)
             # Split camera in two
             cv2.line(depth_image_ocv, (new_width // 2, 0), (new_width // 2, new_height-100), (255, 0, 0), 2)
             cv2.imshow("Depth", depth_image_ocv)
-
-            #calculating distance using euclidean distance formula: sqrt(x^2 + y^2 + z^2) at center of camera
-            #distance = Ecludian_Distance(point_cloud_value)
-            #updating point cloud
-            #point_cloud_np = point_cloud.get_data()
-            #point_cloud_np.dot(tr_np)
-
-            #if not np.isnan(distance) and not np.isinf(distance):
-                # distance * 3.28084 is used for conversion of m to ft
-                #print("Distance to center of camera at ({}, {}) (image center): {:1.3} ft".format(x, y, distance*3.28084), end="\r")
             #press Q key to end program
             key = cv2.waitKey(10)
     cv2.destroyAllWindows()
